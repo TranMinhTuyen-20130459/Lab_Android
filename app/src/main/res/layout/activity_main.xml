@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <Button
+        android:id="@+id/bt_create_db"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Create Database"
+        android:textAllCaps="false"></Button>
+
+    <Button
+        android:id="@+id/bt_delete_db"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Delete Database"
+        android:textAllCaps="false"></Button>
+
+    <Button
+        android:id="@+id/bt_create_tb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Create Table"
+        android:textAllCaps="false"></Button>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/bt_delete_tb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="Delete Table"
+            android:textAllCaps="false"
+
+            ></Button>
+
+        <EditText
+            android:id="@+id/edt_name_tb_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="Type Table to delete"
+            android:maxHeight="48dp"
+            android:minHeight="48dp"
+            android:textAllCaps="false"></EditText>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_insert_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Insert Row tbllop"
+
+        android:textAllCaps="false"></Button>
+
+    <Button
+        android:id="@+id/bt_delete_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Delete Row From tbllop"
+
+        android:textAllCaps="false"></Button>
+
+    <Button
+        android:id="@+id/bt_update_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Update Row to tbllop"
+        android:textAllCaps="false"></Button>
+
+    <Button
+        android:id="@+id/bt_query_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Querying data tbllop"
+
+        android:textAllCaps="false"></Button>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <Button
+            android:id="@+id/bt_insert_object"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Insert Student"
+            android:textAllCaps="false"></Button>
+
+        <EditText
+            android:id="@+id/edt_malop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:hint="Type malop to reference"
+            android:maxHeight="50dp"
+            android:minHeight="50dp"></EditText>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_query_object"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Querying Sinhvien by malop"
+
+        android:textAllCaps="false"></Button>
+
+</LinearLayout>
