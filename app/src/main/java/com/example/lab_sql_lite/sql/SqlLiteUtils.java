@@ -5,7 +5,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.lab_sql_lite.entities.Lop;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SqlLiteUtils {
 
@@ -118,6 +122,37 @@ public class SqlLiteUtils {
         } finally {
             db.close();
         }
+    }
+
+    // load danh sách lớp học trong database quan-ly-sinh-vien.db
+
+    public static List<Lop> loadAllTableLop() {
+        List<Lop> result = new ArrayList<>();
+        try {
+
+            String path = "/data/data/com.example.lab_sql_lite/databases";
+            String nameDb = "quan-ly-sinh-vien.db";
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(path + "/" + nameDb, null, SQLiteDatabase.OPEN_READWRITE);
+
+            Cursor c = db.query(LopContract.LopEntry.TABLE_NAME, null, null, null, null, null, null);
+            c.moveToFirst();
+            while (c.isAfterLast() == false) {
+
+                String maLop = c.getString(c.getColumnIndexOrThrow(LopContract.LopEntry.COLUMN_NAME_MALOP));
+                String tenLop = c.getString(c.getColumnIndexOrThrow(LopContract.LopEntry.COLUMN_NAME_TENLOP));
+                String siSo = c.getString(c.getColumnIndexOrThrow(LopContract.LopEntry.COLUMN_NAME_SISO));
+
+                Lop lop = new Lop(maLop, tenLop, siSo);
+                result.add(lop);
+
+                c.moveToNext();
+            }
+            db.close();
+
+        } catch (Exception e) {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
 }

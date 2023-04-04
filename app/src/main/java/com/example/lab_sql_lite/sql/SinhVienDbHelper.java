@@ -17,7 +17,7 @@ public class SinhVienDbHelper extends SQLiteOpenHelper {
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + SinhVienContract.SinhVienEntry.TABLE_NAME;
 
     public SinhVienDbHelper(@Nullable Context context) {
-        super(context, InforDatabase.DATABASE_NAME, null, InforDatabase.DATABASE_VERSION);
+        super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
     }
 
 

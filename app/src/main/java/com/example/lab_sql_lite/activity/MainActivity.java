@@ -3,6 +3,7 @@ package com.example.lab_sql_lite.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -14,24 +15,18 @@ import com.example.lab_sql_lite.R;
 import com.example.lab_sql_lite.dialogs.CustomDialogCreateDb;
 import com.example.lab_sql_lite.dialogs.CustomDialogDeleteDb;
 import com.example.lab_sql_lite.dialogs.CustomDialog;
+import com.example.lab_sql_lite.entities.Lop;
 import com.example.lab_sql_lite.sql.LopDbHelper;
 import com.example.lab_sql_lite.sql.SinhVienDbHelper;
 import com.example.lab_sql_lite.sql.SqlLiteUtils;
 
+import java.io.Serializable;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    private Button btCreateDb;
-    private Button btDeleteDb;
-    private Button btCreateTb;
-    private Button btDeleteTb;
-
-    private Button btInsertRowTbLop;
-
-    private Button btDeleteRowTbLop;
-
-    private Button btUpdateRowTbLop;
-
-    private Button btQueryDataTbLop;
-    private EditText edtNameTableDel;
+    private Button btCreateDb, btDeleteDb, btCreateTb, btDeleteTb, btInsertRowTbLop,
+            btDeleteRowTbLop, btUpdateRowTbLop, btQueryDataTbLop, btInsertStudent, btQueryStudent;
+    private EditText edtNameTableDel, edtNameMALOP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         this.btDeleteRowTbLop = findViewById(R.id.bt_delete_row);
         this.btUpdateRowTbLop = findViewById(R.id.bt_update_row);
         this.btQueryDataTbLop = findViewById(R.id.bt_query_table);
+        this.btInsertStudent = findViewById(R.id.bt_insert_object);
+        this.btQueryStudent = findViewById(R.id.bt_query_object);
         this.edtNameTableDel = findViewById(R.id.edt_name_tb_delete);
+        this.edtNameMALOP = findViewById(R.id.edt_malop);
 
         btCreateDb.setOnClickListener(view -> clickButtonCreateDb());
         btDeleteDb.setOnClickListener(view -> clickButtonDeleteDb());
@@ -56,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         btDeleteRowTbLop.setOnClickListener(view -> clickButtonDeleteRowTbLop());
         btUpdateRowTbLop.setOnClickListener(view -> clickButtonUpdateRowTbLop());
         btQueryDataTbLop.setOnClickListener(view -> clickButtonQueryDataTbLop());
+        btInsertStudent.setOnClickListener(view -> clickButtonInsertStudent());
+        btQueryStudent.setOnClickListener(view -> clickButtonQueryStudent());
         edtNameTableDel.setOnClickListener(view -> clickButtonDeleteTb());
 
     }
@@ -73,12 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickButtonCreateTb() {
 
-        if (SqlLiteUtils.checkExistDb("quan-ly-sinh-vien.db") == false) {
+        String nameDb = "quan-ly-sinh-vien.db";
+        if (SqlLiteUtils.checkExistDb(nameDb) == false) {
             Toast.makeText(this, "database quan-ly-sinh-vien chưa có trong hệ thống, hãy tạo mới ^.^", Toast.LENGTH_SHORT).show();
+            return;
         } else {
 
             String path = "/data/data/com.example.lab_sql_lite/databases";
-            String nameDb = "quan-ly-sinh-vien.db";
             SQLiteDatabase dtb = SQLiteDatabase.openOrCreateDatabase(path + "/" + nameDb, null);
             LopDbHelper lopDbHelper = new LopDbHelper(this);
             SinhVienDbHelper svDbHelper = new SinhVienDbHelper(this);
@@ -137,8 +138,30 @@ public class MainActivity extends AppCompatActivity {
         customDialog.show();
     }
 
-    public void clickButtonQueryDataTbLop(){
+    public void clickButtonQueryDataTbLop() {
 
+        List<Lop> lops = SqlLiteUtils.loadAllTableLop();
+        if (lops.size() > 0) {
+            Intent intent = new Intent(this, DataTableLop.class);
+            intent.putExtra("listLop", (Serializable) lops);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Chưa có dữ liệu của table Lop !!! hãy thêm vào", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void clickButtonInsertStudent() {
+
+    }
+
+    public void clickButtonQueryStudent() {
+        String maLop = edtNameMALOP.getText().toString();
+        if (maLop.isEmpty()) {
+
+        } else {
+
+        }
     }
 
 }

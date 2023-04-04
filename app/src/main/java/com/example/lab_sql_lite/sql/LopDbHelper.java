@@ -16,7 +16,7 @@ public class LopDbHelper extends SQLiteOpenHelper {
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + LopContract.LopEntry.TABLE_NAME;
 
     public LopDbHelper(@Nullable Context context) {
-        super(context, InforDatabase.DATABASE_NAME, null, InforDatabase.DATABASE_VERSION);
+        super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
     }
 
     @Override
