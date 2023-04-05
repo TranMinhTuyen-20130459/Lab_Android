@@ -114,7 +114,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:hint="Type malop to reference"
+            android:hint="Type malop"
             android:maxHeight="50dp"
             android:minHeight="50dp"></EditText>
     </LinearLayout>

@@ -5,29 +5,31 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.lab_sql_lite.R;
 import com.example.lab_sql_lite.entities.Lop;
+import com.example.lab_sql_lite.entities.SinhVien;
 
 import java.util.List;
 
-public class DataTableLop extends AppCompatActivity {
+public class DataTableSinhVien extends AppCompatActivity {
 
     private ListView listView;
 
-    private List<Lop> arrayLop;
+    private List<SinhVien> arraySV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_table_lop);
+        setContentView(R.layout.activity_data_table_sinhvien);
 
-        this.listView = findViewById(R.id.lvLop);
+        this.listView = findViewById(R.id.lvSinhVien);
 
-        arrayLop = (List<Lop>) getIntent().getSerializableExtra("listLop");;
+        arraySV = (List<SinhVien>) getIntent().getSerializableExtra("listSinhVien");;
 
         ArrayAdapter adapter = new ArrayAdapter(this,
                 com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
-                arrayLop);
+                arraySV);
 
         listView.setAdapter(adapter);
     }

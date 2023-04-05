@@ -1,6 +1,7 @@
 package com.example.lab_sql_lite.dialogs;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.lab_sql_lite.R;
+import com.example.lab_sql_lite.entities.SinhVien;
+import com.example.lab_sql_lite.sql.Database;
 import com.example.lab_sql_lite.sql.SqlLiteUtils;
 
 public class CustomDialog extends android.app.Dialog {
@@ -16,8 +19,8 @@ public class CustomDialog extends android.app.Dialog {
     private int mButtonType; // cờ để phân biệt button
 
     String msg; // đoạn text để hiển thị thông báo cho người dùng
-    private String maLop, tenLop, siSo;
-    private EditText edtMALOP, edtTENLOP, edtSISO;
+    private String maLop, tenLop, siSo, maSV, tenSV;
+    private EditText edtMALOP, edtTENLOP, edtSISO, edtMASV, edtTENSV;
 
     private Button btCancel, btInsDelUpd;
 
@@ -67,6 +70,20 @@ public class CustomDialog extends android.app.Dialog {
 
         } else if (mButtonType == 4) {
 
+            setContentView(R.layout.custom_dialog_insert_student);
+            this.edtMASV = findViewById(R.id.edtMASV);
+            this.edtTENSV = findViewById(R.id.edtTENSV);
+            this.edtMALOP = findViewById(R.id.edtMALOP);
+            this.btCancel = findViewById(R.id.btCancel);
+            this.btInsDelUpd = findViewById(R.id.btInsert);
+
+            btCancel.setOnClickListener(view -> {
+                dismiss();
+            });
+            btInsDelUpd.setOnClickListener(view -> {
+                EventDialogInsertStudent();
+            });
+
         } else if (mButtonType == 5) {
 
         }
@@ -85,20 +102,39 @@ public class CustomDialog extends android.app.Dialog {
         edtSISO.setText("");
     }
 
+    public void GetDataFromAllEditTextOfDialogInsertStudent() {
+        maSV = edtMASV.getText().toString();
+        tenSV = edtTENSV.getText().toString();
+        maLop = edtMALOP.getText().toString();
+    }
+
+    public void ResetAllEditTextOfDialogInsertStudent() {
+
+        edtMASV.setText("");
+        edtTENSV.setText("");
+        edtMALOP.setText("");
+    }
+
+
     public void EventDialogInsertRowTbLop() {
 
         GetDataFromAllEditText();
         if (maLop.isEmpty() || tenLop.isEmpty() || siSo.isEmpty()) {
             msg = "Bạn hãy nhập đầy đủ thông tin !!!";
         } else {
-            long rs = SqlLiteUtils.doInsertRecordTableLop(maLop, tenLop, siSo);
-            if (rs > 0) {
-                msg = "Thêm mới thành công ^.^";
-                ResetAllEditText();
-            } else if (rs == -2) {
-                msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại";
             } else {
-                msg = "Mã lớp đã tồn tại trong hệ thống !!!";
+                SQLiteDatabase dbConnect = new Database().dbConnect;
+                long rs = SqlLiteUtils.doInsertRecordTableLop(dbConnect, maLop, tenLop, siSo);
+                if (rs > 0) {
+                    msg = "Thêm mới thành công ^.^";
+                    ResetAllEditText();
+                } else if (rs == -2) {
+                    msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+                } else {
+                    msg = "Mã lớp đã tồn tại trong hệ thống !!!";
+                }
             }
         }
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
@@ -109,14 +145,19 @@ public class CustomDialog extends android.app.Dialog {
         if (maLop.isEmpty()) {
             msg = "Bạn hãy nhập đầy đủ thông tin !!!";
         } else {
-            long rs = SqlLiteUtils.doDeleteRecordTable(maLop);
-            if (rs > 0) {
-                msg = "Đã xóa thành công ^.^";
-                edtMALOP.setText("");
-            } else if (rs == -2) {
-                msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại";
             } else {
-                msg = maLop + " không có trong bảng Lop !!!";
+                SQLiteDatabase dbConnect = new Database().dbConnect;
+                long rs = SqlLiteUtils.doDeleteRecordTable(dbConnect, maLop);
+                if (rs > 0) {
+                    msg = "Đã xóa thành công ^.^";
+                    edtMALOP.setText("");
+                } else if (rs == -2) {
+                    msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+                } else {
+                    msg = maLop + " không có trong bảng Lop !!!";
+                }
             }
         }
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
@@ -128,18 +169,50 @@ public class CustomDialog extends android.app.Dialog {
         if (maLop.isEmpty() || tenLop.isEmpty() || siSo.isEmpty()) {
             msg = "Bạn hãy nhập đầy đủ thông tin !!!";
         } else {
-            long rs = SqlLiteUtils.doUpdateTable(maLop, tenLop, siSo);
-            if (rs > 0) {
-                msg = "Cập nhật thành công ^.^";
-                ResetAllEditText();
-            } else if (rs == -2) {
-                msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
-            } else {
-                msg = "Cập nhật không thành công !!!";
-            }
-            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-        }
 
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại";
+            } else {
+                SQLiteDatabase dbConnect = new Database().dbConnect;
+                long rs = SqlLiteUtils.doUpdateTable(dbConnect, maLop, tenLop, siSo);
+                if (rs > 0) {
+                    msg = "Cập nhật thành công ^.^";
+                    ResetAllEditText();
+                } else if (rs == -2) {
+                    msg = "Chưa có bảng Lop trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+                } else {
+                    msg = "Cập nhật không thành công !!!";
+                }
+
+            }
+        }
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void EventDialogInsertStudent() {
+
+        GetDataFromAllEditTextOfDialogInsertStudent();
+        if (maSV.isEmpty() || tenSV.isEmpty() || maLop.isEmpty()) {
+            msg = "Bạn hãy nhập đầy đủ thông tin !!!";
+        } else {
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại";
+            } else {
+                SQLiteDatabase dbConnect = new Database().dbConnect;
+                SinhVien sv = new SinhVien(maSV, tenSV, maLop);
+                long rs = SqlLiteUtils.doInsertRecordTableSinhVien(dbConnect, sv);
+                if (rs > 0) {
+                    msg = "Thêm mới thành công ^.^";
+                    ResetAllEditTextOfDialogInsertStudent();
+                } else if (rs == -2) {
+                    msg = "Chưa có bảng SinhVien trong database quan-ly-sinh-vien !!! , hãy tạo mới";
+                } else {
+                    msg = "Thêm mới thất bại !!!";
+                }
+            }
+        }
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
 }

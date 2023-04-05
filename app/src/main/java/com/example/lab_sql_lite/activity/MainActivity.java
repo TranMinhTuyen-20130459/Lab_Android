@@ -16,6 +16,8 @@ import com.example.lab_sql_lite.dialogs.CustomDialogCreateDb;
 import com.example.lab_sql_lite.dialogs.CustomDialogDeleteDb;
 import com.example.lab_sql_lite.dialogs.CustomDialog;
 import com.example.lab_sql_lite.entities.Lop;
+import com.example.lab_sql_lite.entities.SinhVien;
+import com.example.lab_sql_lite.sql.Database;
 import com.example.lab_sql_lite.sql.LopDbHelper;
 import com.example.lab_sql_lite.sql.SinhVienDbHelper;
 import com.example.lab_sql_lite.sql.SqlLiteUtils;
@@ -76,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         String nameDb = "quan-ly-sinh-vien.db";
         if (SqlLiteUtils.checkExistDb(nameDb) == false) {
             Toast.makeText(this, "database quan-ly-sinh-vien chưa có trong hệ thống, hãy tạo mới ^.^", Toast.LENGTH_SHORT).show();
-            return;
         } else {
 
             String path = "/data/data/com.example.lab_sql_lite/databases";
@@ -99,24 +100,28 @@ public class MainActivity extends AppCompatActivity {
         if (nameTbDel == null || nameTbDel.isEmpty()) {
             msg = "Please enter name table to delete !!!";
         } else {
-            String path = "/data/data/com.example.lab_sql_lite/databases";
-            String nameDb = "quan-ly-sinh-vien.db";
-            SQLiteDatabase dtb = SQLiteDatabase.openOrCreateDatabase(path + "/" + nameDb, null);
-            switch (nameTbDel) {
-                case "Lop":
-                    dtb.execSQL(LopDbHelper.SQL_DELETE_ENTRIES);
-                    msg = "Table Lop đã được xóa ^.^";
-                    edtNameTableDel.setText("");
-                    break;
-                case "SinhVien":
-                    dtb.execSQL(SinhVienDbHelper.SQL_DELETE_ENTRIES);
-                    msg = "Table SinhVien đã được xóa";
-                    edtNameTableDel.setText("");
-                    break;
-                default:
-                    msg = "Table " + nameTbDel + " không có trong database quan-ly-sinh-vien !!!";
+
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "database quan-ly-sinh-vien chưa có trong hệ thống, hãy tạo mới ^.^";
+            } else {
+
+                SQLiteDatabase dtb = new Database().dbConnect;
+                switch (nameTbDel) {
+                    case "Lop":
+                        dtb.execSQL(LopDbHelper.SQL_DELETE_ENTRIES);
+                        msg = "Table Lop đã được xóa ^.^";
+                        edtNameTableDel.setText("");
+                        break;
+                    case "SinhVien":
+                        dtb.execSQL(SinhVienDbHelper.SQL_DELETE_ENTRIES);
+                        msg = "Table SinhVien đã được xóa";
+                        edtNameTableDel.setText("");
+                        break;
+                    default:
+                        msg = "Table " + nameTbDel + " không có trong database quan-ly-sinh-vien !!!";
+                }
+                dtb.close();
             }
-            dtb.close();
         }
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
@@ -140,28 +145,58 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickButtonQueryDataTbLop() {
 
-        List<Lop> lops = SqlLiteUtils.loadAllTableLop();
-        if (lops.size() > 0) {
-            Intent intent = new Intent(this, DataTableLop.class);
-            intent.putExtra("listLop", (Serializable) lops);
-            startActivity(intent);
+        if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+            Toast.makeText(this, "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Chưa có dữ liệu của table Lop !!! hãy thêm vào", Toast.LENGTH_SHORT).show();
+            SQLiteDatabase dbConnect = new Database().dbConnect;
+            List<Lop> lops = SqlLiteUtils.loadAllTableLop(dbConnect);
+            if (lops.size() > 0) {
+                Intent intent = new Intent(this, DataTableLop.class);
+                intent.putExtra("listLop", (Serializable) lops);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Chưa có dữ liệu của table Lop !!! hãy thêm vào", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
 
     public void clickButtonInsertStudent() {
 
+        Dialog customDialog = new CustomDialog(this, 4);
+        customDialog.show();
+
     }
 
     public void clickButtonQueryStudent() {
+        String msg = "";
         String maLop = edtNameMALOP.getText().toString();
         if (maLop.isEmpty()) {
-
+            msg = "Bạn hãy cho biết mã lớp ^.^";
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         } else {
 
+            if (SqlLiteUtils.checkExistDb(Database.DATABASE_NAME) == false) {
+                msg = "chưa có database quan-ly-sinh-vien trong hệ thống !!! , hãy tạo lại";
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            } else {
+                SQLiteDatabase dbConnect = new Database().dbConnect;
+                List<SinhVien> list = SqlLiteUtils.loadSinhVienByMaLop(dbConnect, maLop);
+
+                if (list.size() > 0) {
+                    Intent intent = new Intent(this, DataTableSinhVien.class);
+                    intent.putExtra("listSinhVien", (Serializable) list);
+                    startActivity(intent);
+                    edtNameMALOP.setText("");
+                } else {
+                    msg = "Chưa có dữ liệu của table SinhVien !!! hãy thêm vào";
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
         }
+
     }
 
 }
